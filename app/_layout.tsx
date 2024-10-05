@@ -19,7 +19,13 @@ const RootLayout = () => {
 	if (!fontsLoaded && !error) return null;
 
 	return (
-		<Stack>
+		<Stack
+			screenOptions={{
+				headerTintColor: "green",
+				headerBackTitle: "Back",
+				headerTitle: "",
+			}}
+		>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
 		</Stack>
 	);

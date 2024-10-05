@@ -7,7 +7,7 @@ export default function App() {
 		<View className="flex-1 items-center justify-center bg-white">
 			<Text className="text-3xl font-brownieStencil">BinBuddy</Text>
 			<Link href="/Home" style={{ color: "blue" }}>
-				Go to Home
+				Bin Time
 			</Link>
 		</View>
 	);
