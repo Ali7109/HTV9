@@ -12,7 +12,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "./components/CustomButton";
 import greenBg from "../assets/images/GreenBg.png";
 
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-react-native';
+        
+ const initTensorFlow = async () => {
+  await tf.ready();
+  console.log("TensorFlow is ready.");
+};
 export default function App() {
+    
+      // Use useEffect to initialize TensorFlow
+  useEffect(() => {
+    const initialize = async () => {
+      await initTensorFlow();
+    };
+    initialize();
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
+
+    
 	return (
 		<SafeAreaView className="h-full">
 			<ImageBackground
@@ -37,4 +54,5 @@ export default function App() {
 			</ImageBackground>
 		</SafeAreaView>
 	);
-}
+
+
