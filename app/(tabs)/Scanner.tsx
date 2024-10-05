@@ -12,16 +12,13 @@ import { captureScreen } from "react-native-view-shot";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "expo-router";
+import { PhotoObj } from "../types/ScannerTypes";
+import Anaylzer from "../components/Anaylzer";
 
 const targetPixelCount = 1080;
 const pixelRation = PixelRatio.get();
 const pixels = targetPixelCount / pixelRation;
 
-type PhotoObj = {
-	uri: string;
-	width: number;
-	height: number;
-};
 const Scanner = () => {
 	const cameraRef = useRef<any>();
 	const [photo, setPhoto] = useState<PhotoObj | null>(null);
@@ -121,7 +118,7 @@ const Scanner = () => {
 				</View>
 			) : (
 				<View>
-					<Text>{photo.uri}</Text>
+					<Anaylzer photo={photo} />
 				</View>
 			)}
 		</View>
