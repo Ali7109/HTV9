@@ -1,4 +1,5 @@
 // import * as tf from "@tensorflow/tfjs"; // TensorFlow.js
+// import { fetch } from "@tensorflow/tfjs-react-native"; // Used for fetching image data
 // import jpeg from "jpeg-js"; // Decodes JPEG image data
 // import { Image } from "react-native";
 
