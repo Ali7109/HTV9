@@ -13,40 +13,36 @@ import FormField from "../components/FormField";
 import greenBg from "../../assets/images/GreenBg.png";
 import CustomButton from "../components/CustomButton";
 import { isLoaded } from "expo-font";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
-const SignIn = () => {
+const SignUp = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const router = useRouter();
+
 	const [form, setForm] = useState({
+		username: "",
 		email: "",
 		password: "",
 	});
 
-	const submit = () => {
-		setIsSubmitting(true);
-		setTimeout(() => {
-			setIsSubmitting(false);
-			router.push("/Home");
-		});
-	};
+	const submit = () => {};
 
 	return (
 		<ImageBackground
 			source={greenBg}
 			style={{
+				flex: 1,
 				justifyContent: "center",
 				width,
 				height,
-				flex: 1,
 				paddingTop: height * 0.05,
 			}}
 			resizeMode="cover"
 		>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				className="min-h-[83vh]"
 			>
 				<ScrollView
 					contentContainerStyle={{
@@ -72,11 +68,20 @@ const SignIn = () => {
 								color: "#DDA0DD", // lightPurple
 							}}
 						>
-							Log in to your account
+							Sign Up
 						</Text>
 					</View>
 
 					<View className="bg-black p-3 mt-10 rounded-2xl">
+						<FormField
+							title="Username"
+							placeholder="Enter a username"
+							value={form.username}
+							handleChangeText={(e) =>
+								setForm({ ...form, username: e })
+							}
+							otherStyles="mt-10"
+						/>
 						<FormField
 							title="Email"
 							placeholder="Enter your email"
@@ -84,7 +89,6 @@ const SignIn = () => {
 							handleChangeText={(e) =>
 								setForm({ ...form, email: e })
 							}
-							otherStyles={{ marginTop: height * 0.03 }}
 							keyboardType="email-address"
 						/>
 
@@ -95,8 +99,6 @@ const SignIn = () => {
 							handleChangeText={(e) =>
 								setForm({ ...form, password: e })
 							}
-							otherStyles={{ marginTop: height * 0.03 }}
-							secureTextEntry
 						/>
 						<CustomButton
 							title={isSubmitting ? "Signing In..." : "Sign In"}
@@ -106,13 +108,13 @@ const SignIn = () => {
 						/>
 						<View className="w-full mt-5 flex-row items-center justify-center text-white">
 							<Text className="text-white mr-2 text-center">
-								Don't have an account?
+								Have an account?
 							</Text>
 							<Link
-								href="/sign-up"
+								href="/sign-in"
 								className="font-bold text-lightPurple"
 							>
-								Sign Up
+								Sign In
 							</Link>
 						</View>
 					</View>
@@ -122,4 +124,4 @@ const SignIn = () => {
 	);
 };
 
-export default SignIn;
+export default SignUp;
