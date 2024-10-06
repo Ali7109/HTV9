@@ -14,6 +14,8 @@ import greenBg from "../../assets/images/GreenBg.png";
 import CustomButton from "../components/CustomButton";
 import { isLoaded } from "expo-font";
 import { Link, useRouter } from "expo-router";
+import { FIREBASE_AUTH } from "../controller/FirebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const { width, height } = Dimensions.get("window");
 
@@ -25,12 +27,27 @@ const SignIn = () => {
 		password: "",
 	});
 
-	const submit = () => {
+	const auth = FIREBASE_AUTH;
+
+	const submit = async () => {
 		setIsSubmitting(true);
-		setTimeout(() => {
-			setIsSubmitting(false);
+		try {
+			const response = await signInWithEmailAndPassword(
+				auth,
+				form.email,
+				form.password
+			);
+			console.log(response);
 			router.push("/Home");
-		});
+		} catch (error) {
+			alert("Invalid email or password");
+		} finally {
+			setIsSubmitting(false);
+		}
+		// setTimeout(() => {
+		// 	setIsSubmitting(false);
+		// 	router.push("/Home");
+		// });
 	};
 
 	return (
