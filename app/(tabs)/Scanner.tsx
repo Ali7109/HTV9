@@ -13,7 +13,6 @@ import * as cocossd from "@tensorflow-models/coco-ssd";
 import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-//import * as tf from '@tensorflow/tfjs';
 import "@tensorflow/tfjs-react-native"; // Import the TensorFlow.js React Native library
 import { decodeJpeg } from "@tensorflow/tfjs-react-native"; // Decode images to tensors
 
@@ -34,7 +33,20 @@ const Scanner = () => {
 	const [hadPermission, setHasPermission] = useCameraPermissions();
 	const [readyToAnalyse, setReadyToAnalyse] = useState(false);
 	const [result, setResult] = useState<string | null>(null);
-	const [model, setModel] = useState<cocossd.ObjectDetection | null>(null);
+	const [model, setModel] = useState(null);
+
+	const trashClassificationMap = {
+		bottle: "trash",
+		"glass bottle": "recyclable",
+		paper: "recyclable",
+		"banana peel": "biodegradable",
+		"food waste": "biodegradable",
+		person: "biodegradable",
+		can: "recyclable",
+		styrofoam: "trash",
+		"plastic bag": "trash",
+		unknown: "trash", // Default case for unknown items
+	};
 
 	const takePicture = async () => {
 		if (!cameraRef) return;
@@ -74,7 +86,12 @@ const Scanner = () => {
 				const topPrediction = predictions[0];
 				if (topPrediction.score > 0.5) {
 					// Set a confidence threshold
-					setResult(topPrediction.class || "Unknown");
+					const detectedClass = topPrediction.class || "unknown";
+					const category =
+						trashClassificationMap[detectedClass] || "unknown";
+					setResult(
+						`Detected Item: ${detectedClass}, Category: ${category}`
+					);
 				} else {
 					setResult(
 						"Uncertain: " + (topPrediction.class || "Unknown")
@@ -159,7 +176,7 @@ const Scanner = () => {
 							onPress={() => setPhoto(null)}
 							className="m-auto"
 						>
-							<View className="text-center flex flex-row font-serif bg-red-300 p-5 rounded-2xl">
+							<View className="text-center flex flex-row font-serif bg-darkPurple space-x-2 p-5 rounded-2xl">
 								<FontAwesomeIcon icon={faTrash} />
 								<Text>Retake</Text>
 							</View>
@@ -169,7 +186,7 @@ const Scanner = () => {
 								setReadyToAnalyse(true);
 								analyzeImage(photo.uri);
 							}}
-							className="m-auto w-1/2  bg-white p-5 rounded-2xl"
+							className="m-auto w-1/2  bg-lightPurple p-5 rounded-2xl"
 						>
 							<Text className="text-center font-serif">
 								Analyze
@@ -179,7 +196,7 @@ const Scanner = () => {
 				</View>
 			) : (
 				<View>
-					<Text>Detected Item: {result}</Text>
+					<Text>{result}</Text>
 				</View>
 			)}
 		</View>
