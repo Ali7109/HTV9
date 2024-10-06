@@ -19,28 +19,10 @@ type TabIconProps = {
 const TabIcon = ({ icon, color, name, focused }: TabIconProps) => {
 	return <View>{icon}</View>;
 };
-
-const lightPurple = "#D0BCFF";
-const darkPurple = "#65558F";
-
 const TabsLayout = () => {
 	return (
 		<>
-			<Tabs
-				screenOptions={{
-					tabBarInactiveTintColor: "#A3A393",
-					tabBarShowLabel: false,
-					tabBarIconStyle: {
-						width: 30,
-						height: 30,
-						color: "#A3A393",
-					},
-					tabBarStyle: {
-						backgroundColor: "#000000",
-						borderTopColor: "#000000",
-					},
-				}}
-			>
+			<Tabs>
 				<Tabs.Screen
 					name="Home"
 					options={{
@@ -48,15 +30,7 @@ const TabsLayout = () => {
 						headerShown: false,
 						tabBarIcon: ({ color, focused }) => (
 							<TabIcon
-								icon={
-									<FontAwesomeIcon
-										color={`${
-											focused ? darkPurple : lightPurple
-										}`}
-										size={30}
-										icon={faHouse}
-									/>
-								}
+								icon={<FontAwesomeIcon icon={faHouse} />}
 								color={color}
 								name="Home"
 								focused={focused}
@@ -72,13 +46,7 @@ const TabsLayout = () => {
 						tabBarIcon: ({ color, focused }) => (
 							<TabIcon
 								icon={
-									<FontAwesomeIcon
-										color={`${
-											focused ? darkPurple : lightPurple
-										}`}
-										size={30}
-										icon={faMagnifyingGlass}
-									/>
+									<FontAwesomeIcon icon={faMagnifyingGlass} />
 								}
 								color={color}
 								name="Scanner"
@@ -94,15 +62,7 @@ const TabsLayout = () => {
 						headerShown: false,
 						tabBarIcon: ({ color, focused }) => (
 							<TabIcon
-								icon={
-									<FontAwesomeIcon
-										color={`${
-											focused ? darkPurple : lightPurple
-										}`}
-										size={30}
-										icon={faPerson}
-									/>
-								}
+								icon={<FontAwesomeIcon icon={faPerson} />}
 								color={color}
 								name="Profile"
 								focused={focused}
