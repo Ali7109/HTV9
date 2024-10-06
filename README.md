@@ -19,6 +19,7 @@ No more guessing which bin to use—Bin Buddy is your friendly companion for a c
 - Expo: An open-source platform for making React Native applications that streamlines development and deployment processes. Expo allows for easy testing and deployment, as well as integration with the mobile platform's hardware features.
 - TensorFlow: A leading machine learning framework used to train and deploy the waste classification model. TensorFlow's integration enables accurate and efficient real-time predictions within the app.
 - Tailwind CSS: A utility-first CSS framework used for styling. By integrating Tailwind CSS into React Native, we ensure consistent, clean, and customizable design components.
+- Firebase: The backbone of Bin Buddy’s backend infrastructure, providing real-time database services via Firestore, user authentication, and scalable cloud storage. Firebase ensures the app is secure, responsive, and capable of handling high volumes of data efficiently.
 
 ## How It Works
 
