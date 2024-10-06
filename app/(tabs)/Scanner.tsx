@@ -245,7 +245,9 @@ const Scanner = () => {
 										</Text>
 									</View>
 									<Text className="text-lg text-center mt-6">
-										{result?.detectedItem.toUpperCase()}
+										{result
+											? result.detectedItem.toUpperCase()
+											: "Uncertain"}
 									</Text>
 								</View>
 								<View className=" relative mt-20  p-2 rounded-2xl">
@@ -255,7 +257,9 @@ const Scanner = () => {
 										</Text>
 									</View>
 									<Text className="text-lg text-center mt-6">
-										{result?.category.toUpperCase()}
+										{result
+											? result.category.toUpperCase()
+											: "Uncertain"}
 									</Text>
 									<View className="w-52 h-52 ">
 										<Image
@@ -271,6 +275,19 @@ const Scanner = () => {
 											className="m-auto absolute h-52 w-52 rounded-full border-8 border-lightPurple"
 										/>
 									</View>
+								</View>
+								<View className="bg-darkPurple border-2 border-lightPurple mt-10 w-full rounded-2xl">
+									<TouchableOpacity
+										onPress={() => {
+											setPhoto(null);
+											setReadyToAnalyse(false);
+										}}
+										className=" p-2"
+									>
+										<Text className="text-center  text-white">
+											Try Again
+										</Text>
+									</TouchableOpacity>
 								</View>
 							</>
 						)}
