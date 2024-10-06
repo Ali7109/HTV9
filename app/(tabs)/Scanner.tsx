@@ -17,6 +17,10 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import "@tensorflow/tfjs-react-native"; // Import the TensorFlow.js React Native library
 import { decodeJpeg } from "@tensorflow/tfjs-react-native"; // Decode images to tensors
 import purpleBg from "../../assets/images/PurpleBg.png";
+import { trashClassificationMap } from "../helper/TFConversion";
+import rcImg from "../../assets/images/RCA.png";
+import owImg from "../../assets/images/OWA.png";
+import hwImg from "../../assets/images/HWA.png";
 
 const targetPixelCount = 1080;
 const pixelRation = PixelRatio.get();
@@ -28,28 +32,20 @@ type PhotoObj = {
 	height: number;
 };
 
+type ResultType = {
+	detectedItem: string;
+	category: string;
+};
+
 const Scanner = () => {
 	const cameraRef = useRef<any>();
 	const [photo, setPhoto] = useState<PhotoObj | null>(null);
 	const [facing, setFacing] = useState<CameraType>("back");
 	const [hadPermission, setHasPermission] = useCameraPermissions();
 	const [readyToAnalyse, setReadyToAnalyse] = useState(false);
-	const [result, setResult] = useState<string | null>(null);
+	const [result, setResult] = useState<ResultType | null>(null); // Updated state to hold both detectedItem and category
 	const [model, setModel] = useState(null);
 	const [loading, setLoading] = useState(false);
-
-	const trashClassificationMap = {
-		bottle: "trash",
-		"glass bottle": "recyclable",
-		paper: "recyclable",
-		"banana peel": "biodegradable",
-		"food waste": "biodegradable",
-		person: "biodegradable",
-		can: "recyclable",
-		styrofoam: "trash",
-		"plastic bag": "trash",
-		unknown: "trash", // Default case for unknown items
-	};
 
 	const takePicture = async () => {
 		if (!cameraRef) return;
@@ -87,28 +83,55 @@ const Scanner = () => {
 
 			if (predictions.length > 0) {
 				const topPrediction = predictions[0];
+
 				if (topPrediction.score > 0.5) {
 					// Set a confidence threshold
-					const detectedClass = topPrediction.class || "unknown";
-					const category =
-						trashClassificationMap[detectedClass] || "unknown";
-					setResult(
-						`Detected Item: ${detectedClass}, Category: ${category}`
-					);
+					let detectedClass = topPrediction.class || "unknown";
+
+					// Normalize the detected class by removing extra spaces, apostrophes, and making it lowercase
+					detectedClass = detectedClass
+						.toLowerCase()
+						.replace(/['\s]/g, ""); // Remove spaces and apostrophes
+
+					// Type guard to check if detectedClass is a key in trashClassificationMap
+					let category: string = "unknown";
+					for (const key in trashClassificationMap) {
+						const normalizedKey = key
+							.toLowerCase()
+							.replace(/['\s]/g, "");
+						if (
+							normalizedKey.includes(detectedClass) ||
+							detectedClass.includes(normalizedKey)
+						) {
+							category =
+								trashClassificationMap[
+									key as keyof typeof trashClassificationMap
+								];
+							break;
+						}
+					}
+
+					// Update the result state with both detectedItem and category
+					setResult({
+						detectedItem: topPrediction.class || "Unknown",
+						category: category,
+					});
 				} else {
-					setResult(
-						"Uncertain: " + (topPrediction.class || "Unknown")
-					);
+					setResult({
+						detectedItem: topPrediction.class || "Unknown",
+						category: "Uncertain",
+					});
 				}
-			} else {
-				setResult("Unknown");
 			}
 
 			imageTensor.dispose(); // Clean up tensor to free memory
 			setLoading(false);
 		} catch (error) {
 			console.log("Error analyzing image:", error);
-			setResult("Error analyzing image");
+			setResult({
+				detectedItem: "Error",
+				category: "Error analyzing image",
+			});
 		}
 	};
 
@@ -208,12 +231,48 @@ const Scanner = () => {
 					}}
 					resizeMode="cover"
 				>
-					{/* <Text>{result}</Text> */}
-					<View className="bg-background rounded-2xl m-auto p-5">
+					<View className="bg-white rounded-2xl m-auto p-5 w-2/3 h-1/3">
 						{loading ? (
-							<Text>Loading...</Text>
+							<Text className="text-lg m-auto rounded-full">
+								Loading...
+							</Text>
 						) : (
-							<Text>{result}</Text>
+							<>
+								<View className=" relative  p-2 rounded-2xl">
+									<View className=" absolute -top-10 -left-10 rounded-2xl bg-lightPurple p-2">
+										<Text className="text-lg font-semibold">
+											Detected Item
+										</Text>
+									</View>
+									<Text className="text-lg text-center mt-6">
+										{result?.detectedItem.toUpperCase()}
+									</Text>
+								</View>
+								<View className=" relative mt-20  p-2 rounded-2xl">
+									<View className=" absolute -top-10 -left-10 rounded-2xl bg-lightPurple p-2">
+										<Text className="text-lg font-semibold">
+											Category
+										</Text>
+									</View>
+									<Text className="text-lg text-center mt-6">
+										{result?.category.toUpperCase()}
+									</Text>
+									<View className="w-52 h-52 ">
+										<Image
+											source={
+												result?.category ===
+												"recyclable"
+													? rcImg
+													: result?.category ===
+													  "organic"
+													? owImg
+													: hwImg
+											}
+											className="m-auto absolute h-52 w-52 rounded-full border-8 border-lightPurple"
+										/>
+									</View>
+								</View>
+							</>
 						)}
 					</View>
 				</ImageBackground>
