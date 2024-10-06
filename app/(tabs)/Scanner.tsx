@@ -44,7 +44,7 @@ const Scanner = () => {
 	const [hadPermission, setHasPermission] = useCameraPermissions();
 	const [readyToAnalyse, setReadyToAnalyse] = useState(false);
 	const [result, setResult] = useState<ResultType | null>(null); // Updated state to hold both detectedItem and category
-	const [model, setModel] = useState(null);
+	const [model, setModel] = useState<cocossd.ObjectDetection | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const takePicture = async () => {
