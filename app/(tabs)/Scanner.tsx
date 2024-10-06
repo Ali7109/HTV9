@@ -21,6 +21,21 @@ import { trashClassificationMap } from "../helper/TFConversion";
 import rcImg from "../../assets/images/RCA.png";
 import owImg from "../../assets/images/OWA.png";
 import hwImg from "../../assets/images/HWA.png";
+import { onAuthStateChanged, User } from "firebase/auth";
+import {
+	FIREBASE_AUTH,
+	FIREBASE_FIRESTORE,
+} from "../controller/FirebaseConfig";
+import {
+	collection,
+	doc,
+	getDocs,
+	increment,
+	query,
+	serverTimestamp,
+	updateDoc,
+	where,
+} from "firebase/firestore";
 
 const targetPixelCount = 1080;
 const pixelRation = PixelRatio.get();
@@ -47,6 +62,40 @@ const Scanner = () => {
 	const [model, setModel] = useState<cocossd.ObjectDetection | null>(null);
 	const [loading, setLoading] = useState(false);
 
+	const [user, setUser] = useState<User | null>(null);
+	// Firestore update function
+	const updateUserScanCount = async (userEmail: string) => {
+		try {
+			const activityQuery = query(
+				collection(FIREBASE_FIRESTORE, "activity"),
+				where("email", "==", userEmail) // Assuming the "email" field is in the documents
+			);
+
+			// Get the query results
+			const querySnapshot = await getDocs(activityQuery);
+
+			// If a document is found, increment the scans field
+			querySnapshot.forEach(async (docSnapshot) => {
+				// Reference to the document
+				const userDocRef = doc(
+					FIREBASE_FIRESTORE,
+					"activity",
+					docSnapshot.id
+				);
+
+				// Increment the "scans" field by 1
+				// Update the "lastscan" field with the current time as a timestamp
+				await updateDoc(userDocRef, {
+					scans: increment(1),
+					lastscan: serverTimestamp(),
+				});
+
+				console.log("Scans field incremented for user:", userEmail);
+			});
+		} catch (error) {
+			console.error("Error incrementing scans:", error);
+		}
+	};
 	const takePicture = async () => {
 		if (!cameraRef) return;
 		const photo = await cameraRef.current.takePictureAsync({
@@ -123,7 +172,10 @@ const Scanner = () => {
 					});
 				}
 			}
-
+			// Update scan count for the current user
+			if (user?.email) {
+				await updateUserScanCount(user.email);
+			}
 			imageTensor.dispose(); // Clean up tensor to free memory
 			setLoading(false);
 		} catch (error) {
@@ -137,6 +189,9 @@ const Scanner = () => {
 
 	React.useEffect(() => {
 		loadModel();
+		onAuthStateChanged(FIREBASE_AUTH, (user) => {
+			setUser(user);
+		});
 	}, []);
 
 	if (!hadPermission) {
