@@ -5,6 +5,7 @@ import {
 	Button,
 	PixelRatio,
 	Image,
+	ImageBackground,
 } from "react-native";
 import React, { useState, useRef } from "react";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
@@ -15,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import "@tensorflow/tfjs-react-native"; // Import the TensorFlow.js React Native library
 import { decodeJpeg } from "@tensorflow/tfjs-react-native"; // Decode images to tensors
+import purpleBg from "../../assets/images/PurpleBg.png";
 
 const targetPixelCount = 1080;
 const pixelRation = PixelRatio.get();
@@ -34,6 +36,7 @@ const Scanner = () => {
 	const [readyToAnalyse, setReadyToAnalyse] = useState(false);
 	const [result, setResult] = useState<string | null>(null);
 	const [model, setModel] = useState(null);
+	const [loading, setLoading] = useState(false);
 
 	const trashClassificationMap = {
 		bottle: "trash",
@@ -74,7 +77,7 @@ const Scanner = () => {
 			console.log("Model is not loaded yet.");
 			return;
 		}
-
+		setLoading(true);
 		try {
 			const response = await fetch(uri);
 			const imageData = await response.arrayBuffer(); // Directly use arrayBuffer
@@ -102,6 +105,7 @@ const Scanner = () => {
 			}
 
 			imageTensor.dispose(); // Clean up tensor to free memory
+			setLoading(false);
 		} catch (error) {
 			console.log("Error analyzing image:", error);
 			setResult("Error analyzing image");
@@ -134,7 +138,7 @@ const Scanner = () => {
 	}
 
 	return (
-		<View>
+		<View className="h-full">
 			{!photo ? (
 				<CameraView
 					style={{ width: "100%", height: "100%" }}
@@ -195,9 +199,24 @@ const Scanner = () => {
 					</View>
 				</View>
 			) : (
-				<View>
-					<Text>{result}</Text>
-				</View>
+				<ImageBackground
+					source={purpleBg}
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						marginTop: -60,
+					}}
+					resizeMode="cover"
+				>
+					{/* <Text>{result}</Text> */}
+					<View className="bg-background rounded-2xl m-auto p-5">
+						{loading ? (
+							<Text>Loading...</Text>
+						) : (
+							<Text>{result}</Text>
+						)}
+					</View>
+				</ImageBackground>
 			)}
 		</View>
 	);
