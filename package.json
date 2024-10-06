@@ -22,6 +22,7 @@
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^6.0.2",
     "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow-models/mobilenet": "^2.1.1",
     "@tensorflow/tfjs": "^4.21.0",
     "@tensorflow/tfjs-react-native": "^1.0.0",
     "base64-arraybuffer": "^1.0.2",
