@@ -25,7 +25,7 @@ export default function App() {
 	// Use useEffect to initialize TensorFlow
 	useEffect(() => {
 		const initialize = async () => {
-			await initTensorFlow();
+			await initTensorFlow(); // Initialize TensorFlow
 		};
 		initialize();
 	}, []); // Empty dependency array ensures this runs only once when the component mounts
