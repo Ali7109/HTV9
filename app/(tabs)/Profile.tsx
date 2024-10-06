@@ -34,7 +34,7 @@ const Profile = () => {
 
 	useEffect(() => {
 		// Listen for user auth state changes
-		const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (user) => {
+		onAuthStateChanged(FIREBASE_AUTH, async (user) => {
 			if (user) {
 				setUser(user);
 				const userEmail = user.email;
@@ -69,8 +69,6 @@ const Profile = () => {
 				setUser(null);
 			}
 		});
-
-		return () => unsubscribe(); // Cleanup the listener on unmount
 	}, []);
 
 	return (

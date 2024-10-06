@@ -32,6 +32,7 @@ import {
 	getDocs,
 	increment,
 	query,
+	serverTimestamp,
 	updateDoc,
 	where,
 } from "firebase/firestore";
@@ -83,8 +84,10 @@ const Scanner = () => {
 				);
 
 				// Increment the "scans" field by 1
+				// Update the "lastscan" field with the current time as a timestamp
 				await updateDoc(userDocRef, {
 					scans: increment(1),
+					lastscan: serverTimestamp(),
 				});
 
 				console.log("Scans field incremented for user:", userEmail);
